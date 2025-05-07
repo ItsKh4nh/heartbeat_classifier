@@ -17,9 +17,16 @@ from sklearn.utils import shuffle, class_weight
 
 # Keras
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, GlobalAveragePooling2D
+from keras.layers import (
+    Dense,
+    Dropout,
+    Conv2D,
+    MaxPooling2D,
+    GlobalAveragePooling2D,
+)
 from keras.utils import to_categorical
 from keras.optimizers import Adam
+
 import warnings
 
 warnings.filterwarnings("ignore", category=FutureWarning)
