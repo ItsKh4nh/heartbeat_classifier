@@ -387,10 +387,10 @@ encoder.classes_ = np.array(
 )
 
 # File to classify
-File_to_classify = "data/test/my_heartbeat.wav"
+file_to_classify = "data/test/my_heartbeat.wav"
 
 # Extract features
-x_test = [extract_features(File_to_classify, 0.5)]
+x_test = [extract_features(file_to_classify, 0.5)]
 x_test = np.array(x_test)
 x_test = x_test[..., np.newaxis]
 

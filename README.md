@@ -84,9 +84,9 @@ This will:
 5. Display performance metrics and visualizations
 
 ### Classifying New Heartbeat Recordings
-To classify a new heartbeat recording, modify the `File_to_classify` variable:
+To classify a new heartbeat recording, modify the `file_to_classify` variable:
 
 ```python
 # File to classify
-File_to_classify = "your_heartbeat_recording.wav"
+file_to_classify = "your_heartbeat_recording.wav"
 ```
