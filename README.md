@@ -2,9 +2,20 @@
 # Heartbeat Sound Classification
 
 ## Project Overview
-This project implements a deep learning system for classifying heartbeat sounds into different categories: normal, murmur, extrahls (extra heart sounds), artifact, and extrasystole. The classifier uses audio processing techniques to extract features from heartbeat recordings and employs a convolutional neural network (CNN) to categorize them accurately.
+This project implements a deep learning system for classifying heartbeat sounds into different categories: Normal, Murmur, Extrahls (extra heart sounds), Artifact, and Extrasystole. The classifier uses audio processing techniques to extract features from heartbeat recordings and employs a Convolutional Neural Network (CNN) to categorize them accurately.
 
 The model can help identify abnormal heart sounds that might indicate various heart conditions, providing a potential tool for preliminary cardiac assessment.
+
+## Project Structure
+```
+heartbeat_classifier/
+├── data/               # Dataset directory
+│   ├── set_a/          
+│   ├── set_b/          
+├── models/             # Saved model files
+├── main.py             # Main script for training and inference
+└── requirements.txt    # Project dependencies
+```
 
 ## Technologies Used
 - **Python 3.x**
@@ -23,7 +34,7 @@ The model is trained on the [Heartbeat Sounds Dataset](https://www.kaggle.com/da
 - Extrasystoles
 
 ## Results
-The model achieves excellent performance across different heartbeat sound categories:
+The model achieves excellent performance (up to 90% Accuracy) across different heartbeat sound categories:
 
 | Class       | Precision | Recall | F1-Score | Support |
 |-------------|-----------|--------|----------|---------|
@@ -41,12 +52,12 @@ The model achieves excellent performance across different heartbeat sound catego
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/heartbeat_classifier.git
+git clone https://github.com/ItsKh4nh/heartbeat_classifier
 cd heartbeat_classifier
 
-# Create a virtual environment (optional but recommended)
+# Create a virtual environment (Optional but recommended)
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -60,6 +71,10 @@ To train the model from scratch:
 ```bash
 python main.py
 ```
+or
+```bash
+jupyter notebook main.ipynb
+```
 
 This will:
 1. Load and preprocess audio data from the dataset
@@ -69,27 +84,9 @@ This will:
 5. Display performance metrics and visualizations
 
 ### Classifying New Heartbeat Recordings
-To classify a new heartbeat recording, modify the `File_to_classify` variable in `main.py`:
+To classify a new heartbeat recording, modify the `File_to_classify` variable:
 
 ```python
 # File to classify
-File_to_classify = "path/to/your/heartbeat/recording.wav"
-```
-
-Then run the script with:
-
-```bash
-python main.py
-```
-
-## Project Structure
-```
-heartbeat_classifier/
-├── data/
-│   ├── set_a/          # First dataset directory
-│   ├── set_b/          # Second dataset directory
-│   └── test/           # Test files
-├── models/             # Saved model files
-├── main.py             # Main script for training and inference
-└── requirements.txt    # Project dependencies
+File_to_classify = "your_heartbeat_recording.wav"
 ```
