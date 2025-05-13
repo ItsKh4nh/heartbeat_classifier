@@ -1,3 +1,4 @@
+# General imports
 import os
 import glob
 import numpy as np
@@ -35,15 +36,14 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 def load_dataset(path, label_mapping):
     """
-    Recursively load .wav files from 'path', assign labels based on 'label_mapping'.
-    Files containing any key in label_mapping will be assigned the corresponding label.
+    Recursively load .wav files from dataset, assign labels based on 'label_mapping'.
+    Files containing any key in label_mapping will be assigned to the corresponding label.
     Unmatched or unlabelled files are skipped.
     """
     if not os.path.exists(path):
         print(f"Warning: Directory {path} not found.")
         return pd.DataFrame()
 
-    # find all .wav files under path
     pattern = os.path.join(path, "**", "*.wav")
     wav_files = glob.glob(pattern, recursive=True)
     if not wav_files:
@@ -53,10 +53,8 @@ def load_dataset(path, label_mapping):
     data = []
     for f in wav_files:
         fname = os.path.basename(f).lower()
-        # skip unlabelled
         if "unlabelled" in fname:
             continue
-        # determine label
         label = None
         for key, mapped in label_mapping.items():
             if key in fname:
@@ -64,12 +62,12 @@ def load_dataset(path, label_mapping):
                 break
         if label is None:
             continue
-        # get duration
+        # Get audio duration
         try:
             dur = librosa.get_duration(path=f)
         except Exception:
             continue
-        # slice into overlapping segments
+        # Slice into overlapping segments
         if dur >= 3:
             slice_dur, stride = 3.0, 1.5  # 50% overlap
             num = max(1, int((dur - slice_dur) / stride) + 1)
@@ -91,13 +89,11 @@ def extract_features(audio_path, offset, duration=3):
     # Ensure audio is exactly the expected duration by padding with zeros or trimming
     expected_length = int(duration * sr)
     if len(y) < expected_length:
-        # Pad with zeros if shorter than expected
         y = np.pad(y, (0, expected_length - len(y)), "constant")
     elif len(y) > expected_length:
-        # Trim if longer than expected
         y = y[:expected_length]
 
-    # Generate mel spectrogram with fixed time and frequency dimensions
+    # Generate mel spectrogram
     S = librosa.feature.melspectrogram(
         y=y, sr=sr, n_fft=2048, hop_length=512, n_mels=128
     )
@@ -110,11 +106,9 @@ def extract_features(audio_path, offset, duration=3):
         130  # This should be consistent for 3 second clips with hop_length=512
     )
     if mfccs.shape[1] < target_frames:
-        # Pad if too short
         padding = ((0, 0), (0, target_frames - mfccs.shape[1]))
         mfccs = np.pad(mfccs, padding, mode="constant")
     elif mfccs.shape[1] > target_frames:
-        # Trim if too long
         mfccs = mfccs[:, :target_frames]
 
     return mfccs
@@ -129,11 +123,10 @@ def visualize_dataset(df, samples=1):
 
     for lbl in labels:
         subset = df[df.label == lbl].iloc[:samples]
-        for idx, row in enumerate(subset.iterrows()):
-            _, row_data = row
+        for _, row_data in subset.iterrows():
             y, sr = librosa.load(row_data.filename, offset=row_data.offset, duration=3)
 
-            # Create a new figure for this sample with 3 subplots
+            # Create figure with 3 subplots
             plt.figure(figsize=(18, 15))
 
             # Plot waveform
@@ -285,7 +278,7 @@ def train_model():
     model.summary()
 
     # Training setup
-    os.makedirs("model", exist_ok=True)
+    os.makedirs("models", exist_ok=True)
     cp = ModelCheckpoint(
         "models/heartbeat_classifier_best.keras",
         monitor="val_accuracy",
@@ -330,7 +323,7 @@ def train_model():
 
     # Model evaluation
     loss, acc = model.evaluate(X_test, y_test)
-    print("Test loss:", loss, "Accuracy:", acc)
+    print(f"Test Loss: {loss}, Test Accuracy: {acc}")
     preds = model.predict(X_test)
     y_true = encoder.inverse_transform(np.argmax(y_test, axis=1))
     y_pred = encoder.inverse_transform(np.argmax(preds, axis=1))
@@ -388,17 +381,16 @@ train_model()
 # Load model
 model = load_model("models/heartbeat_classifier_final.keras")
 
-# Must match label order used in training
 encoder = LabelEncoder()
 encoder.classes_ = np.array(
     ["artifact", "extrahls", "extrasystole", "murmur", "normal"]
-)  # Update based on your training
+)
 
 # File to classify
-classify_file = "data/test/my_heartbeat.wav"
+File_to_classify = "data/test/my_heartbeat.wav"
 
 # Extract features
-x_test = [extract_features(classify_file, 0.5)]
+x_test = [extract_features(File_to_classify, 0.5)]
 x_test = np.array(x_test)
 x_test = x_test[..., np.newaxis]
 
